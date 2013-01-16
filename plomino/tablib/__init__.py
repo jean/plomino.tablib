@@ -7,6 +7,7 @@ from zope.interface import implements
 
 from tablib import Dataset
 from tablib import Databook
+from tablib.formats import xls
 
 from Products.PythonScripts.Utility import allow_module, allow_class
 
@@ -14,10 +15,10 @@ allow_module('plomino.tablib')
 allow_class(Dataset)
 allow_class(Databook)
 
-def dataset(data, headers=None):
+def dataset(data, headers=None, title=None):
     """ `data` is a list of dicts.
     """
-    dataset = Dataset()
+    dataset = Dataset(title=title)
     dataset.dict = data
     if headers:
         dataset.headers = headers
@@ -28,11 +29,18 @@ def databook(data):
     """
     return Databook(data)
 
+def export_set(data):
+    return xls.export_set(data)
+
+def export_book(book):
+    """Returns XLS representation of DataBook."""
+    return xls.export_book(book)
+
 class PlominoTablibUtils:
     implements(interfaces.IPlominoUtils)
 
     module = 'plomino.tablib'
-    methods = ['dataset', 'databook']
+    methods = ['dataset', 'databook', 'export_set', 'export_book']
 
 component.provideUtility(PlominoTablibUtils, interfaces.IPlominoUtils, name='plomino.tablib')
 
